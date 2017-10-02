@@ -2,8 +2,10 @@
 
 @section('content')
     @if (Auth::check())
-        <?php $user = Auth::user(); ?>
-        {{ $user->name }}
+        @if (count($tasks) > 0)
+            @include('tasks.index', ['tasks' => $tasks])
+        @endif
+        {!! link_to_route('tasks.create', '新規タスクの作成', null, ['class' => 'btn btn-primary']) !!}
     @else
         <div class="center jumbotron">
             <div class="text-center">
@@ -12,4 +14,4 @@
             </div>
         </div>
     @endif
-@endsection
+@endsection)

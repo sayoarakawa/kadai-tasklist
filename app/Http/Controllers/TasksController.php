@@ -52,10 +52,10 @@ class TasksController extends Controller
             'content' => 'required|max:255',
             ]);
         
-        $task = new Task;
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
+        $request->user()->tasks()->create([
+            'status' => $request->status,
+            'content' => $request->content,
+        ]);
         
         return redirect('/');
     }
@@ -69,6 +69,10 @@ class TasksController extends Controller
     public function show($id)
     {
         $task = Task::find($id);
+        
+        if (\Auth::user()->id != $task->user_id) {
+            return redirect()->back();
+        }
         
         return view('tasks.show', [
             'task' => $task,
@@ -84,6 +88,10 @@ class TasksController extends Controller
     public function edit($id)
     {
         $task = Task::find($id);
+        
+        if (\Auth::user()->id != $task->user_id) {
+            return redirect()->back();
+        }
         
         return view('tasks.edit', [
             'task' => $task,
@@ -109,6 +117,10 @@ class TasksController extends Controller
         $task->content = $request->content;
         $task->save();
         
+        if (\Auth::user()->id != $task->user_id) {
+            return redirect()->back();
+        }
+        
         return redirect('/');
     }
 
@@ -122,6 +134,10 @@ class TasksController extends Controller
     {
         $task = Task::find($id);
         $task->delete();
+        
+        if (\Auth::user()->id != $task->user_id) {
+            return redirect()->back();
+        }
         
         return redirect('/');
     }
